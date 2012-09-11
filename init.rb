@@ -7,6 +7,8 @@ class Heroku::Command::Pg < Heroku::Command::Base
   # 
   # see your cache hit rate for your database (effective databases are at 99% and up)
   # 
+  # -e, --extended # expanded output formatting
+  #
   sql = %q(SELECT 
         to_char((sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit), '99.99') as cache_hit_rate 
       FROM 
@@ -16,6 +18,8 @@ class Heroku::Command::Pg < Heroku::Command::Base
   # pg:blocking [database]
   #
   # see what queries are blocking your queries
+  #
+  # -e, --extended # expanded output formatting
   #
   def blocking
     sql = %q(
@@ -41,6 +45,8 @@ class Heroku::Command::Pg < Heroku::Command::Base
   #
   # see what locks are held by what
   #
+  # -e, --extended # expanded output formatting
+  #
   def locks
     sql = %q(
    select
@@ -61,6 +67,8 @@ class Heroku::Command::Pg < Heroku::Command::Base
   # pg:ps [database]
   #
   # see what's goin' on
+  #
+  # -e, --extended # expanded output formatting
   #
   def ps
     sql = %q(
