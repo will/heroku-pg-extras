@@ -7,7 +7,7 @@ class Heroku::Command::Pg < Heroku::Command::Base
   # 
   # see your cache hit rate for your database (effective databases are at 99% and up)
   # 
-  # -e, --extended # expanded output formatting
+  # -e, --expanded # expanded output formatting
   #
   sql = %q(SELECT 
         to_char((sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit), '99.99') as cache_hit_rate 
@@ -19,7 +19,7 @@ class Heroku::Command::Pg < Heroku::Command::Base
   #
   # see what queries are blocking your queries
   #
-  # -e, --extended # expanded output formatting
+  # -e, --expanded # expanded output formatting
   #
   def blocking
     sql = %q(
@@ -45,7 +45,7 @@ class Heroku::Command::Pg < Heroku::Command::Base
   #
   # see what locks are held by what
   #
-  # -e, --extended # expanded output formatting
+  # -e, --expanded # expanded output formatting
   #
   def locks
     sql = %q(
@@ -68,7 +68,7 @@ class Heroku::Command::Pg < Heroku::Command::Base
   #
   # see what's goin' on
   #
-  # -e, --extended # expanded output formatting
+  # -e, --expanded # expanded output formatting
   #
   def ps
     sql = %q(
@@ -149,7 +149,7 @@ class Heroku::Command::Pg < Heroku::Command::Base
     begin
       ENV["PGPASSWORD"] = uri.password
       ENV["PGSSLMODE"]  = 'require'
-      fmt = '-P x' if options[:extended]
+      fmt = '-P x' if options[:expanded]
       exec %Q(psql #{fmt} -c "#{sql}" -U #{uri.user} -h #{uri.host} -p #{uri.port || 5432} #{uri.path[1..-1]})
     rescue Errno::ENOENT
       output_with_bang "The local psql command could not be located"
