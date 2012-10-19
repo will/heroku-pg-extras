@@ -19,7 +19,7 @@ class Heroku::Command::Pg < Heroku::Command::Base
           when 0 then 'NaN'::numeric
           else to_char((sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit), '99.99')::numeric
         end as ratio
-      FROM pg_statio_user_indexes;)
+      FROM pg_statio_user_tables;)
 
     exec_sql(sql, find_uri)
   end
