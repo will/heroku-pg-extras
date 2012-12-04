@@ -10,14 +10,14 @@ class Heroku::Command::Pg < Heroku::Command::Base
     sql = %q(
       SELECT
         'index hit rate' as name,
-        (sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit) as ratio
+        (sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit + idx_blks_read) as ratio
       FROM pg_statio_user_indexes
       union all
       SELECT
        'cache hit rate' as name,
         case sum(idx_blks_hit)
           when 0 then 'NaN'::numeric
-          else to_char((sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit), '99.99')::numeric
+          else to_char((sum(idx_blks_hit) - sum(idx_blks_read)) / sum(idx_blks_hit + idx_blks_read), '99.99')::numeric
         end as ratio
       FROM pg_statio_user_indexes;)
 
@@ -31,7 +31,10 @@ class Heroku::Command::Pg < Heroku::Command::Base
   def indexusage
   sql = %q(SELECT
          relname,
-         100 * idx_scan / (seq_scan + idx_scan) percent_of_times_index_used,
+         CASE idx_scan
+           WHEN 0 THEN 'Insufficient data'
+           ELSE (100 * idx_scan / (seq_scan + idx_scan))::text
+         END percent_of_times_index_used,
          n_live_tup rows_in_table
        FROM
          pg_stat_user_tables
